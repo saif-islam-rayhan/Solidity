@@ -1,0 +1,20 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+contract contract1{
+    function c1function()public pure returns(string memory){
+        string memory str="I am a contract1 function";
+        return str;
+    }
+}
+contract contract2 is contract1{
+     function c2function()public  pure returns(string memory){
+        string memory str1="I am a contract2 function";
+        return str1;
+     }
+}
+contract contract3 is contract1,contract2{
+    function c3function()public pure returns(string memory){
+        string memory str2="I am a contract 3 function";
+        return str2;
+    }
+}
