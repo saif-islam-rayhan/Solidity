@@ -1,0 +1,27 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+interface Itoken {
+    function getbalance(address account)external view returns(uint256);
+    function transfer  (address, uint256) external returns (bool);
+    function mint (address, uint256) external ;
+
+}
+contract Mytoken is Itoken{
+    mapping (address => uint256) balances;
+    address public owner;
+    constructor () {
+        owner = msg.sender;
+        }
+        function getbalance(address account)external override view returns(uint256){
+            return balances[account];
+        }
+        function transfer(address _to, uint256 amount) external override returns (bool) {
+        require(balances[msg.sender]>amount ,"Insuffucent balance");
+        balances[msg.sender]-=amount;
+        balances[_to]+=amount;
+            return true;}
+        function mint (address _to, uint256 amount) external override  {
+            require(balances[owner]>0 ,"Owner is not available");
+            balances[_to]-=amount;
+        }
+}
