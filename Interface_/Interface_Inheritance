@@ -1,0 +1,123 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+interface IToken {
+    function transfer(address _to, uint256 _amount) external;
+    function mint(address _to, uint256 _amount) external;
+    function balanceOf(address _account) external view returns (uint256);
+}
+
+interface IPausable {
+    function pause() external;
+    function unpause() external;
+    function isPaused() external view returns (bool);
+}
+
+contract TokenBase is IToken {
+    mapping(address => uint256) private balances;
+    uint256 public totalSupply;
+    address public owner;
+
+    constructor(uint256 _initialSupply) {
+        owner = msg.sender;
+        totalSupply = _initialSupply;
+        balances[msg.sender] = _initialSupply;
+    }
+
+    modifier onlyOwner() {
+        require(msg.sender == owner, "Not the owner");
+        _;
+    }
+
+    function transfer(address _to, uint256 _amount) public virtual override {
+        require(balances[msg.sender] >= _amount, "Insufficient balance");
+        balances[msg.sender] -= _amount;
+        balances[_to] += _amount;
+    }
+
+    function mint(address _to, uint256 _amount) public override onlyOwner {
+        totalSupply += _amount;
+        balances[_to] += _amount;
+    }
+
+    function balanceOf(address _account) public view override returns (uint256) {
+        return balances[_account];
+    }
+}
+
+contract Pausable is IPausable {
+    bool private paused = false;
+    address public owner;
+
+    constructor() {
+        owner = msg.sender;
+    }
+
+    modifier onlyOwner() {
+        require(msg.sender == owner, "Not the owner");
+        _;
+    }
+
+    modifier whenNotPaused() {
+        require(!paused, "Token transfers are paused");
+        _;
+    }
+
+    function pause() public override onlyOwner {
+        paused = true;
+    }
+
+    function unpause() public override onlyOwner {
+        paused = false;
+    }
+
+    function isPaused() public view override returns (bool) {
+        return paused;
+    }
+}
+
+contract MyToken is IToken, IPausable {
+    TokenBase private token;
+    Pausable private pausable;
+    address public owner;
+
+    constructor(uint256 _initialSupply) {
+        owner = msg.sender;
+        token = new TokenBase(_initialSupply);
+        pausable = new Pausable();
+    }
+
+    modifier onlyOwner() {
+        require(msg.sender == owner, "Not the owner");
+        _;
+    }
+
+    modifier whenNotPaused() {
+        require(!pausable.isPaused(), "Token transfers are paused");
+        _;
+    }
+
+    function transfer(address _to, uint256 _amount) public override whenNotPaused {
+        token.transfer(_to, _amount);
+    }
+
+    function mint(address _to, uint256 _amount) public override onlyOwner {
+        token.mint(_to, _amount);
+    }
+
+    function balanceOf(address _account) public view override returns (uint256) {
+        return token.balanceOf(_account);
+    }
+
+    function pause() public override onlyOwner {
+        pausable.pause();
+    }
+
+    function unpause() public override onlyOwner {
+        pausable.unpause();
+    }
+
+    function isPaused() public view override returns (bool) {
+        return pausable.isPaused();
+    }
+}
