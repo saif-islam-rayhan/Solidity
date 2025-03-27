@@ -1,0 +1,15 @@
+//Internal: Internal use korle amra j contract a aci oi contract and tar child contract a acces korte parbo
+
+  pragma solidity ^0.8.0;
+
+  contract Parent {
+      function internalFunction() internal pure returns (string memory) {
+          return "This is an internal function";
+      }
+  }
+
+  contract Child is Parent {
+      function callInternalFunction() public pure returns (string memory) {
+          return internalFunction(); 
+      }
+  }
