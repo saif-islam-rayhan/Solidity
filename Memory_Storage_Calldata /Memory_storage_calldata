@@ -1,0 +1,30 @@
+//Storage:A permanent storage area where state variables reside; data persists between function calls and transactions.
+
+//Memory:A temporary, mutable storage location used during function execution; data is erased after the function concludes.
+
+//Calldata:A non-modifiable, read-only area containing function arguments passed to external functions; cannot be altered.
+
+
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+contract DataLocationExample {
+    
+    uint256 public storedData;
+
+    
+    constructor(uint256 initialData) {
+        storedData = initialData;
+    }
+
+    // Function to update storedData using memory
+    function updateStoredData(uint256 newData) public {
+        uint256 tempData = newData; // Memory
+        storedData = tempData;
+    }
+
+    // Function to compare storedData with an external input using calldata
+    function compareData(uint256 externalData) external view returns (bool) {
+        return storedData == externalData;
+    }
+}
