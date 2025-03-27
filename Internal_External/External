@@ -1,0 +1,25 @@
+//a ta bahir ar contract theke accesss kora jabe
+
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+
+contract FirstContract {
+    // external 
+    function externalFunction() external pure returns (string memory) {
+        return " external";
+    }
+
+   
+    function callExternalFunctionInternally() public view returns (string memory) {
+        return this.externalFunction();
+    }
+}
+
+contract SecondContract {
+    // FirstContract  external 
+    function callExternalFunction(address firstContractAddress) public view returns (string memory) {
+        FirstContract firstContract = FirstContract(firstContractAddress);
+        return firstContract.externalFunction();
+    }
+}
