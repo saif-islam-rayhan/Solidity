@@ -1,0 +1,41 @@
+✅ 1. Basic Structure
+
+    Define the token’s name, symbol, and decimal places.
+
+    Set the totalSupply (total number of tokens).
+
+    Assign the initial balance to the creator’s address.
+
+✅ 2. Core Functionality
+
+    transfer() ➝ Allows users to send tokens to others.
+
+    approve() ➝ Allows users to approve someone else to spend their tokens.
+
+    transferFrom() ➝ Allows approved users to send tokens from the original user’s balance.
+
+✅ 3. Event Logging
+
+    Transfer ➝ Logs any movement of tokens between addresses.
+
+    Approval ➝ Logs when someone approves another address to spend their tokens.
+
+✅ 4. Mint & Burn Function
+
+    mint() ➝ Allows the owner to create (mint) new tokens.
+
+    burn() ➝ Allows users to destroy (burn) their own tokens.
+
+✅ 5. Owner and Modifier
+
+    Implement an owner to restrict certain functions, like minting tokens.
+
+    Use the onlyOwner modifier to ensure only the owner can mint tokens.
+
+🔥 Bonus (Advanced Features, for later)
+
+    pause/unpause ➝ Emergency function to stop or restart transfers.
+
+    ICO/token sale ➝ A feature for selling tokens for Ether.
+
+    Frontend/Web3 Integration ➝ Allows users to interact with the token using a UI (like Metamask).
