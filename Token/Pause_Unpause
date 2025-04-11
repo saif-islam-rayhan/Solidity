@@ -1,0 +1,102 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+contract MyToken {
+    string public name = "MyToken";
+    string public symbol = "MTK";
+    uint8 public decimals = 18;
+    uint256 public totalSupply;
+
+    address public owner;
+    bool public paused = false;
+
+    mapping(address => uint256) public balanceOf;
+    mapping(address => mapping(address => uint256)) public allowance;
+
+    // Modifier to restrict access to only the owner
+    modifier onlyOwner() {
+        require(msg.sender == owner, "Not the owner");
+        _;
+    }
+
+    // Modifier to allow actions only when the contract is not paused
+    modifier whenNotPaused() {
+        require(!paused, "Contract is paused");
+        _;
+    }
+
+    // Modifier to allow actions only when the contract is paused
+    modifier whenPaused() {
+        require(paused, "Contract is not paused");
+        _;
+    }
+
+    // Constructor to set the initial owner and total supply
+    constructor() {
+        owner = msg.sender;
+        totalSupply = 1000 * (10 ** uint256(decimals));
+        balanceOf[msg.sender] = totalSupply;
+    }
+
+    // Transfer function: Allows users to send tokens to another address
+    function transfer(address to, uint256 value) public whenNotPaused returns (bool success) {
+        require(balanceOf[msg.sender] >= value, "Not enough balance");
+        balanceOf[msg.sender] -= value;
+        balanceOf[to] += value;
+        emit Transfer(msg.sender, to, value);
+        return true;
+    }
+
+    // Approve function: Allows a spender to use tokens on behalf of the owner
+    function approve(address spender, uint256 value) public whenNotPaused returns (bool success) {
+        allowance[msg.sender][spender] = value;
+        emit Approval(msg.sender, spender, value);
+        return true;
+    }
+
+    // TransferFrom function: Allows a spender to send tokens from the owner's balance
+    function transferFrom(address from, address to, uint256 value) public whenNotPaused returns (bool success) {
+        require(balanceOf[from] >= value, "Not enough balance");
+        require(allowance[from][msg.sender] >= value, "Not enough allowance");
+
+        balanceOf[from] -= value;
+        balanceOf[to] += value;
+        allowance[from][msg.sender] -= value;
+
+        emit Transfer(from, to, value);
+        return true;
+    }
+
+    // Mint function: Allows the owner to mint new tokens
+    function mint(address to, uint256 value) public onlyOwner returns (bool) {
+        totalSupply += value;
+        balanceOf[to] += value;
+        emit Transfer(address(0), to, value);
+        return true;
+    }
+
+    // Burn function: Allows the user to burn their own tokens
+    function burn(uint256 value) public whenNotPaused returns (bool) {
+        require(balanceOf[msg.sender] >= value, "Not enough balance to burn");
+        balanceOf[msg.sender] -= value;
+        totalSupply -= value;
+        emit Transfer(msg.sender, address(0), value);
+        return true;
+    }
+
+    // Pause the contract (only owner can do this)
+    function pause() public onlyOwner whenNotPaused {
+        paused = true;
+    }
+
+    // Unpause the contract (only owner can do this)
+    function unpause() public onlyOwner whenPaused {
+        paused = false;
+    }
+
+    // Event for transferring tokens
+    event Transfer(address indexed from, address indexed to, uint256 value);
+
+    // Event for approving a spender
+    event Approval(address indexed owner, address indexed spender, uint256 value);
+}
