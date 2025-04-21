@@ -1,0 +1,15 @@
+step1:
+npm install --save-dev hardhat
+step 2:
+npx hardhat init
+step 3
+create folder contracts,scripts
+step4:
+contracts ar vitor solidity file khule than 
+step5 
+npx hardhat compile
+step6:
+npx hardhat run scripts/deploy.js --network localhost
+
+step 7:
+npm i @nomicfoundation/hardhat-toolbox
